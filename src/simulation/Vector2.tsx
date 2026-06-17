@@ -39,6 +39,12 @@ export default class Vector2 {
         return other.sub(this).normalized();
     }
 
+    rotatedBy(angle: number): Vector2 {
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
+        return new Vector2(this.x * cos - this.y * sin, this.y * cos + this.x * sin);
+    }
+
     static randomDirection(): Vector2 {
         const angle = Math.random() * 2 * Math.PI;
         return new Vector2(Math.cos(angle), Math.sin(angle));

@@ -1,24 +1,25 @@
-import SimulationObject from "./SimulationObject";
-import Plant from "./Plant";
-import HerbivoreAnimal from "./HerbivoreAnimal";
-import CarnivoreAnimal from "./CarnivoreAnimal";
+import SimulationObject from "./SimulationObject.tsx";
+import Plant from "./Plant.tsx";
+import Animal from "./Animal.tsx";
 
 export default class SimulationField {
     private _width: number;
     private _height: number;
-    private _objects: Map<number, SimulationObject>;
-    private _lastId: number;
+    private _plants: Map<number, Plant>;
+    private _animals: Map<number, Animal>;
+    private _lastId: number = 0;
 
     constructor(width: number, height: number) {
         this._width = width;
         this._height = height;
-        this._objects = new Map<number, SimulationObject>;
-        this._lastId = 0;
+        this._plants = new Map<number, Plant>();
+        this._animals = new Map<number, Animal>();
     }
 
     get width() { return this._width; }
     get height() { return this._height; }
-    get objects() { return this._objects; }
+    get plants() { return this._plants; }
+    get animals() { return this._animals; }
 
     getNextId(): number {
         this._lastId += 1;
@@ -26,41 +27,38 @@ export default class SimulationField {
     }
 
     getObjectById(id: number): SimulationObject | undefined {
-        return this._objects.get(id);
+        return this._plants.get(id) ?? this._animals.get(id);
     }
 
     getAllObjects(): SimulationObject[] {
-        return [...this._objects.values()];
+        return [...this._plants.values(), ...this._animals.values()];
     }
 
-    getPlants(): Plant[] {
-        return this.getAllObjects().filter(obj => obj instanceof Plant);
+    addPlant(obj: Plant) {
+        this._plants.set(obj.id, obj);
     }
 
-    getHerbivoreAnimals(): HerbivoreAnimal[] {
-        return this.getAllObjects().filter(obj => obj instanceof HerbivoreAnimal);
+    addAnimal(obj: Animal) {
+        this._animals.set(obj.id, obj);
     }
 
-    getCarivoreAnimals(): CarnivoreAnimal[] {
-        return this.getAllObjects().filter(obj => obj instanceof CarnivoreAnimal);
-    }
-
-    addObject(obj: SimulationObject) {
-        this._objects.set(obj.id, obj);
-    }
-
-    removeObject(obj: SimulationObject) {
-        this._objects.delete(obj.id);
+    removeObjectById(id: number) {
+        this._plants.delete(id);
+        this._animals.delete(id);
     }
 
     update(deltaTime: number) {
-        const ids = Array.from(this._objects.keys());
-        for (const id of ids) {
-            this._objects.get(id)?.update(deltaTime);
+        const plantIds = [...this._plants.keys()];
+        for (const id of plantIds) {
+            this._plants.get(id)?.update(deltaTime);
+        }
+        const animalIds = [...this._animals.keys()];
+        for (const id of animalIds) {
+            this._animals.get(id)?.update(deltaTime);
         }
     }
 
     renderObjects(): React.JSX.Element[] {
-        return [...this.getPlants(), ...this.getHerbivoreAnimals(), ...this.getCarivoreAnimals()].map(obj => obj.render());
+        return [...this._plants.values(), ...this._animals.values()].map(obj => obj.render());
     }
 }

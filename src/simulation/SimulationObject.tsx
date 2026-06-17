@@ -1,5 +1,5 @@
-import SimulationField from "./SimulationField";
-import Vector2 from "./Vector2";
+import SimulationField from "./SimulationField.tsx";
+import Vector2 from "./Vector2.tsx";
 
 export default abstract class SimulationObject {
     private _simulationField: SimulationField;
@@ -15,6 +15,7 @@ export default abstract class SimulationObject {
     get field() { return this._simulationField; }
     get id() { return this._id; }
     get pos() { return this._pos; }
+    abstract get radius(): number;
 
     moveTo(pos: Vector2) {
         this._pos = pos;
