@@ -5,16 +5,18 @@ import Vector2 from './simulation/Vector2.tsx';
 import Animal from "./simulation/Animal.tsx";
 import AnimalSpecie, { AnimalDiet } from "./simulation/AnimalSpecie.tsx";
 import './App.css';
+import { randomRange } from "./simulation/Utils.tsx";
 
 function createField(width: number, height: number): SimulationField {
     const herbivoreSpecie = new AnimalSpecie({
         name: "Herbivore",
         diet: AnimalDiet.Herbivore,
         maxSpeed: 50,
-        visionRadius: 200,
-        maxSatiety: 120,
-        maxStamina: 80,
-        maxAge: 60,
+        visionRadius: 92,
+        maxSatiety: 100,
+        maxStamina: 60,
+        maxAge: 120,
+        satietyValue: 60,
         radius: 7,
         color: "#ecd400",
     });
@@ -22,33 +24,31 @@ function createField(width: number, height: number): SimulationField {
         name: "Carnivore",
         diet: AnimalDiet.Carnivore,
         eats: ["Herbivore"],
-        maxSpeed: 70,
-        visionRadius: 300,
-        maxSatiety: 100,
-        maxStamina: 100,
-        maxAge: 50,
+        maxSpeed: 80,
+        visionRadius: 90,
+        maxSatiety: 120,
+        maxStamina: 80,
+        maxAge: 90,
+        satietyValue: 90,
         radius: 9,
         color: "#e20000",
     });
-    function randomPos() {
-        return new Vector2(Math.random() * width, Math.random() * height);
-    }
 
-    const field = new SimulationField(width, height);
-    for (let i = 0; i < 100; i++) {
-        field.addPlant(new Plant(field, randomPos()));
+    const field = new SimulationField(width, height, 4);
+    for (let i = 0; i < 75; i++) {
+        field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), 50));
     }
-    for (let i = 0; i < 70; i++) {
-        field.addAnimal(new Animal(field, randomPos(), herbivoreSpecie));
+    for (let i = 0; i < 40; i++) {
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), herbivoreSpecie, randomRange(2.0, 15.0)));
     }
-    for (let i = 0; i < 30; i++) {
-        field.addAnimal(new Animal(field, randomPos(), carnivoreSpecie));
+    for (let i = 0; i < 12; i++) {
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), carnivoreSpecie, randomRange(2.0, 15.0)));
     }
     return field;
 }
 
 export default function App() {
-    const [simulationField,] = useState(createField(1500, 800));
+    const [simulationField,] = useState(createField(1500, 1000));
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
 
     const tps = 60;

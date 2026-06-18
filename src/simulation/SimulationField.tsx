@@ -1,6 +1,8 @@
 import SimulationObject from "./SimulationObject.tsx";
 import Plant from "./Plant.tsx";
 import Animal from "./Animal.tsx";
+import Vector2 from "./Vector2.tsx";
+import { randomRange } from "./Utils.tsx";
 
 export default class SimulationField {
     private _width: number;
@@ -8,10 +10,13 @@ export default class SimulationField {
     private _plants: Map<number, Plant>;
     private _animals: Map<number, Animal>;
     private _lastId: number = 0;
+    private _plantSpawnRate: number;
+    private _plantSpawnCooldown: number = 0.0;
 
-    constructor(width: number, height: number) {
+    constructor(width: number, height: number, plantSpawnRate: number) {
         this._width = width;
         this._height = height;
+        this._plantSpawnRate = plantSpawnRate;
         this._plants = new Map<number, Plant>();
         this._animals = new Map<number, Animal>();
     }
@@ -55,6 +60,12 @@ export default class SimulationField {
         const animalIds = [...this._animals.keys()];
         for (const id of animalIds) {
             this._animals.get(id)?.update(deltaTime);
+        }
+
+        this._plantSpawnCooldown -= deltaTime;
+        if (this._plantSpawnCooldown <= 0) {
+            this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), 50));
+            this._plantSpawnCooldown = 1 / (this._plantSpawnRate * randomRange(0.5, 1.5));
         }
     }
 

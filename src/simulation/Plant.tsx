@@ -3,10 +3,15 @@ import SimulationObject from "./SimulationObject.tsx"
 import Vector2 from "./Vector2.tsx";
 
 export default class Plant extends SimulationObject {
-    constructor(simulationField: SimulationField, pos: Vector2) {
-        super(simulationField, pos);
+    private _satietyValue: number;
+
+    constructor(field: SimulationField, pos: Vector2, satietyValue: number) {
+        super(field, pos);
+
+        this._satietyValue = satietyValue;
     }
 
+    get satietyValue() { return this._satietyValue; }
     get radius() { return 5; }
 
     update(_deltaTime: number) {}
