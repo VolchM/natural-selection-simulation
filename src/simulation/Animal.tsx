@@ -3,7 +3,7 @@ import Plant from "./Plant.tsx";
 import SimulationField from "./SimulationField.tsx";
 import SimulationObject from "./SimulationObject.tsx"
 import Vector2 from "./Vector2.tsx";
-import { clamp, randomRange } from "./Utils.tsx";
+import { clamp, randomRange } from "../Utils.tsx";
 
 export default class Animal extends SimulationObject {
     private _specie: AnimalSpecie;

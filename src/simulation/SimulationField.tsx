@@ -2,7 +2,7 @@ import SimulationObject from "./SimulationObject.tsx";
 import Plant from "./Plant.tsx";
 import Animal from "./Animal.tsx";
 import Vector2 from "./Vector2.tsx";
-import { randomRange } from "./Utils.tsx";
+import { randomRange } from "../Utils.tsx";
 
 export default class SimulationField {
     private _width: number;

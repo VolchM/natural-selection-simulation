@@ -1,4 +1,4 @@
-import { clamp, randomRange } from "./Utils";
+import { clamp, randomRange } from "../Utils";
 
 export default class Vector2 {
     x: number;
