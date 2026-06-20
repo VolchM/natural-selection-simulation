@@ -1,10 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import Simulation from './components/Simulation.tsx';
 import './index.css';
-import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <Simulation targetFPS={60} />
   </StrictMode>,
 );
