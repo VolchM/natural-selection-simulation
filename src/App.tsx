@@ -1,4 +1,4 @@
-import Simulation from './components/SImulation';
+import Simulation from './components/Simulation.tsx';
 import './App.css';
 
 export default function App(): React.JSX.Element {

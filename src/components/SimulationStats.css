@@ -1,0 +1,8 @@
+.stats-count {
+    font-size: 1.25rem;
+    margin: 8px;
+
+    span:nth-child(2) {
+        float: right;
+    }
+}

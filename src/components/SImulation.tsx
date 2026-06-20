@@ -7,12 +7,13 @@ import Animal from "../simulation/Animal.tsx";
 import { randomRange } from "../Utils.tsx";
 import SimulationParams from "./SimulationParams.tsx";
 import SimulationControls from "./SimulationControls.tsx";
+import SimulationStats from "./SimulationStats.tsx";
 import "./Simulation.css";
 
 
 function createField(width: number, height: number): SimulationField {
     const herbivoreSpecie = new AnimalSpecie({
-        name: "Herbivore",
+        name: "Травоядное",
         diet: AnimalDiet.Herbivore,
         maxSpeed: 50,
         visionRadius: 92,
@@ -24,9 +25,9 @@ function createField(width: number, height: number): SimulationField {
         color: "#ecd400",
     });
     const carnivoreSpecie = new AnimalSpecie({
-        name: "Carnivore",
+        name: "Плотоядное",
         diet: AnimalDiet.Carnivore,
-        eats: ["Herbivore"],
+        eats: ["Травоядное"],
         maxSpeed: 80,
         visionRadius: 90,
         maxSatiety: 120,
@@ -37,7 +38,7 @@ function createField(width: number, height: number): SimulationField {
         color: "#e20000",
     });
 
-    const field = new SimulationField(width, height, 4);
+    const field = new SimulationField(width, height, [herbivoreSpecie, carnivoreSpecie], 4);
     for (let i = 0; i < 75; i++) {
         field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), 50));
     }
@@ -56,7 +57,7 @@ type SimulationProps = {
 
 export default function Simulation({ targetFPS }: SimulationProps): React.JSX.Element {
     const width = 1500, height = 1000;
-    const [simulationField, setField] = useState(createField(width, height));
+    const [field, setField] = useState(createField(width, height));
     const [paused, setPaused] = useState(false);
     const [speed, setSpeed] = useState(1.0);
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
@@ -80,10 +81,10 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
             if (deltaTime >= targetFrameLength - 0.0003) {
                 lastTimestamp = timestamp;
                 if (deltaTime <= 0.2) {
-                    simulationField.update(deltaTime * speed);
+                    field.update(deltaTime * speed);
                 } else {
                     // Окно не было активным
-                    simulationField.update(targetFrameLength * speed);
+                    field.update(targetFrameLength * speed);
                 }
                 redrawField();
             }
@@ -91,20 +92,27 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
         }
 
         return () => cancelAnimationFrame(requestID);
-    }, [simulationField, targetFPS, paused, speed]);
+    }, [field, targetFPS, paused, speed]);
     
+    const speciesCount = field.species.map(curSpecie => ({
+        specie: curSpecie,
+        count: [...field.animals.values()].filter(animal => animal.specie === curSpecie).length
+    }));
+
     return (
         <div className="simulation">
             <SimulationParams />
             <div className="container field-container">
-                <svg className="field" width={simulationField.width} height={simulationField.height} viewBox={`0 0 ${simulationField.width} ${simulationField.height}`}>
-                    {simulationField.renderObjects()}
+                <svg className="field" width={field.width} height={field.height} viewBox={`0 0 ${field.width} ${field.height}`}>
+                    {field.renderObjects()}
                 </svg>
             </div>
             <div className="container simulation-info">
                 <SimulationControls paused={paused} onPausedChange={setPaused}
                                     onReset={() => setField(createField(width, height))}
                                     speed={speed} onSpeedChange={setSpeed} />
+                <hr/>
+                <SimulationStats plantsCount={field.plants.size} speciesCount={speciesCount} />
                 <hr/>
             </div>
         </div>

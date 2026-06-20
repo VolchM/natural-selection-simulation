@@ -2,6 +2,7 @@ import SimulationObject from "./SimulationObject.tsx";
 import Plant from "./Plant.tsx";
 import Animal from "./Animal.tsx";
 import Vector2 from "./Vector2.tsx";
+import AnimalSpecie from "./AnimalSpecie.tsx";
 import { randomRange } from "../Utils.tsx";
 
 export default class SimulationField {
@@ -12,10 +13,12 @@ export default class SimulationField {
     private _lastId: number = 0;
     private _plantSpawnRate: number;
     private _plantSpawnCooldown: number = 0.0;
+    private _species: AnimalSpecie[];
 
-    constructor(width: number, height: number, plantSpawnRate: number) {
+    constructor(width: number, height: number, species: AnimalSpecie[], plantSpawnRate: number) {
         this._width = width;
         this._height = height;
+        this._species = species;
         this._plantSpawnRate = plantSpawnRate;
         this._plants = new Map<number, Plant>();
         this._animals = new Map<number, Animal>();
@@ -25,6 +28,7 @@ export default class SimulationField {
     get height() { return this._height; }
     get plants() { return this._plants; }
     get animals() { return this._animals; }
+    get species() { return this._species; }
 
     getNextId(): number {
         this._lastId += 1;

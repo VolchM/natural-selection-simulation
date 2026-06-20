@@ -12,6 +12,7 @@
 
 .field-container {
     overflow: auto;
+    min-width: 500px;
     max-height: 95vh;
     line-height: 0;
 }
