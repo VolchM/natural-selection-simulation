@@ -18,6 +18,7 @@ export default class Animal extends SimulationObject {
 
     private _reproductionTimer: number = 0.0;
     private _directionChangeTimer: number = 0.0;
+    private _restTimer: number = 0.0;
 
     constructor(field: SimulationField, pos: Vector2, specie: AnimalSpecie, age: number = 0) {
         super(field, pos);
@@ -43,12 +44,12 @@ export default class Animal extends SimulationObject {
     update(deltaTime: number) {
         this.animalBehaviour(deltaTime);
 
-        const currentSpeed = this._speedMult * this._specie.maxSpeed * (this._stamina / this._specie.maxStamina) ** (1/4);
-        const staminaLoss = 10 * (currentSpeed / this._specie.maxSpeed);
-        let staminaRegeneration = 15 * (1 - currentSpeed / this._specie.maxSpeed) * (this._satiety / this._specie.maxSatiety) ** (1/3);
+        const currentSpeed = this._speedMult * this._specie.maxSpeed * (1/3 + (this._stamina / this._specie.maxStamina) * 2/3);
+        let staminaLoss = 12 * (currentSpeed / this._specie.maxSpeed);
+        const staminaRegeneration = 15 * (1 - currentSpeed / this._specie.maxSpeed) * (this._satiety / this._specie.maxSatiety) ** (1/3);
         let satietyLoss = 2;
         if (this._age > this._specie.maxAge) {
-            staminaRegeneration = staminaRegeneration * (1 / (this._age + 1 - this._specie.maxAge));
+            staminaLoss = staminaLoss * (this._age + 1 - this._specie.maxAge) ** (1/3);
             satietyLoss = satietyLoss * (this._age + 1 - this._specie.maxAge) ** (1/3);
         }
 
@@ -95,8 +96,16 @@ export default class Animal extends SimulationObject {
     }
 
     private animalBehaviour(deltaTime: number) {
-        if (this._stamina <= 0.15 * this._specie.maxStamina) {
+        this._restTimer -= deltaTime;
+        if (this._restTimer > 0) {
+            // Отдыхать
+            this._speedMult = 0.0;
+            return;
+        }
+
+        if (this._stamina <= 0.05 * this._specie.maxStamina) {
             // Остановиться отдохнуть при почти полном отсутствии выносливости
+            this._restTimer = randomRange(0.5, 1.0);
             this._speedMult = 0.0;
             return;
         }
@@ -146,8 +155,9 @@ export default class Animal extends SimulationObject {
         }
 
         if (this._stamina <= 0.3 * this._specie.maxStamina) {
-            // Очень медленно ходить при малой выносливости
-            this.moveRandomly(deltaTime, 0.1);
+            // Остановиться отдохнуть при малой выносливости
+            this._speedMult = 0;
+            this._restTimer = randomRange(1.0, 2.0);
             return;
         } else if (this._satiety <= 0.45 * this._specie.maxSatiety) {
             // Искать еду с повышенной скоростью

@@ -45,10 +45,10 @@ function createField(width: number, height: number): SimulationField {
         field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), 50));
     }
     for (let i = 0; i < 40; i++) {
-        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), herbivoreSpecie, randomRange(2.0, 15.0)));
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), herbivoreSpecie, randomRange(0, 0.75 * herbivoreSpecie.maxAge)));
     }
     for (let i = 0; i < 12; i++) {
-        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), carnivoreSpecie, randomRange(2.0, 15.0)));
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), carnivoreSpecie, randomRange(0, 0.75 * carnivoreSpecie.maxAge)));
     }
     return field;
 }
@@ -140,7 +140,7 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
                                     onReset={() => setField(createField(width, height))}
                                     speed={speed} onSpeedChange={setSpeed} />
                 <hr/>
-                <SimulationStats plantsCount={field.plants.size} speciesCount={speciesCount} />
+                <SimulationStats simulationTime={field.simulationTime} plantsCount={field.plants.size} speciesCount={speciesCount} />
                 <hr/>
                 <ObjectInfo object={selectedObject} />
             </div>

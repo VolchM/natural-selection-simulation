@@ -10,9 +10,10 @@ export default class SimulationField {
     private _height: number;
     private _plants: Map<number, Plant>;
     private _animals: Map<number, Animal>;
+    private _simulationTime: number = 0;
     private _lastId: number = 0;
     private _plantSpawnRate: number;
-    private _plantSpawnCooldown: number = 0.0;
+    private _plantSpawnCooldown: number = 0;
     private _species: AnimalSpecie[];
 
     constructor(width: number, height: number, species: AnimalSpecie[], plantSpawnRate: number) {
@@ -29,6 +30,7 @@ export default class SimulationField {
     get plants() { return this._plants; }
     get animals() { return this._animals; }
     get species() { return this._species; }
+    get simulationTime() { return this._simulationTime; }
 
     getNextId(): number {
         this._lastId += 1;
@@ -71,6 +73,7 @@ export default class SimulationField {
             this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), 50));
             this._plantSpawnCooldown = 1 / (this._plantSpawnRate * randomRange(0.5, 1.5));
         }
+        this._simulationTime += deltaTime;
     }
 
     renderObjects(selectObject: (object: SimulationObject) => void): React.JSX.Element[] {
