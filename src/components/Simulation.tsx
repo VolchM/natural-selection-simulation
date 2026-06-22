@@ -10,8 +10,9 @@ import SimulationParams from "./SimulationParams.tsx";
 import SimulationControls from "./SimulationControls.tsx";
 import SimulationStats from "./SimulationStats.tsx";
 import ObjectInfo from "./ObjectInfo.tsx";
+import plusIcon from "../assets/plus.svg";
+import minusIcon from "../assets/minus.svg";
 import "./Simulation.css";
-
 
 function createField(width: number, height: number): SimulationField {
     const herbivoreSpecie = new AnimalSpecie({
@@ -63,6 +64,7 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
     const [paused, setPaused] = useState(false);
     const [speed, setSpeed] = useState(1.0);
     const [selectedObjectId, setSelectedObjectId] = useState<number | null>(null);
+    const [zoom, setZoom] = useState(1.0);
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
 
     function selectObject(object: SimulationObject) {
@@ -129,11 +131,15 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
         <div className="simulation">
             <SimulationParams />
             <div className="container field-container">
-                <svg className="field" width={field.width} height={field.height} viewBox={`0 0 ${field.width} ${field.height}`}>
-                    <rect width="100%" height="100%" fill="transparent" onClick={deselectObject}/>
-                    {field.renderObjects(selectObject)}
-                    {selectedObjectGraphics}
-                </svg>
+                <div className="field-scroll">
+                    <svg className="field" width={field.width * zoom} height={field.height * zoom} viewBox={`0 0 ${field.width} ${field.height}`}>
+                        <rect width="100%" height="100%" fill="transparent" onClick={deselectObject}/>
+                        {field.renderObjects(selectObject)}
+                        {selectedObjectGraphics}
+                    </svg>
+                </div>
+                <button className="zoom-button zoom-plus" onClick={() => setZoom(zoom * 1.2)}><img src={plusIcon} /></button>
+                <button className="zoom-button zoom-minus" onClick={() => setZoom(zoom / 1.2)}><img src={minusIcon} /></button>
             </div>
             <div className="container simulation-info">
                 <SimulationControls paused={paused} onPausedChange={setPaused}
