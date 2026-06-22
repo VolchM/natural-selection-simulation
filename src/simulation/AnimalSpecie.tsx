@@ -15,7 +15,7 @@ export default class AnimalSpecie {
     visionRadius: number;
     maxStamina: number;
     maxSatiety: number;
-    maxAge: number;
+    oldAge: number;
     satietyValue: number;
 
     radius: number;
@@ -24,7 +24,7 @@ export default class AnimalSpecie {
     constructor(args: { name: string, diet: AnimalDiet, eats?: string[],
                         maxSpeed: number, visionRadius: number,
                         maxStamina: number, maxSatiety: number,
-                        maxAge: number, satietyValue: number,
+                        oldAge: number, satietyValue: number,
                         radius: number, color: string }) {
         this.name = args.name;
         this.diet = args.diet;
@@ -33,7 +33,7 @@ export default class AnimalSpecie {
         this.visionRadius = args.visionRadius;
         this.maxStamina = args.maxStamina;
         this.maxSatiety = args.maxSatiety;
-        this.maxAge = args.maxAge;
+        this.oldAge = args.oldAge;
         this.satietyValue = args.satietyValue;
         this.radius = args.radius;
         this.color = args.color;

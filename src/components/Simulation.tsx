@@ -3,6 +3,7 @@ import SimulationField from "../simulation/SimulationField.tsx";
 import Plant from "../simulation/Plant.tsx";
 import Vector2 from '../simulation/Vector2.tsx';
 import AnimalSpecie, { AnimalDiet } from "../simulation/AnimalSpecie.tsx";
+import PlantParams from "../simulation/PlantParams.tsx";
 import SimulationObject from "../simulation/SimulationObject.tsx";
 import Animal from "../simulation/Animal.tsx";
 import { randomRange } from "../Utils.tsx";
@@ -15,6 +16,14 @@ import minusIcon from "../assets/minus.svg";
 import "./Simulation.css";
 
 function createField(width: number, height: number): SimulationField {
+    const plantParams = new PlantParams({
+        startingCount: 50,
+        spawnRate: 5,
+        satietyValue: 50,
+        oldAge: 40,
+        radius: 5,
+        color: "#1a9e00"
+    });
     const herbivoreSpecie = new AnimalSpecie({
         name: "Травоядное",
         diet: AnimalDiet.Herbivore,
@@ -22,7 +31,7 @@ function createField(width: number, height: number): SimulationField {
         visionRadius: 92,
         maxSatiety: 100,
         maxStamina: 60,
-        maxAge: 120,
+        oldAge: 120,
         satietyValue: 60,
         radius: 7,
         color: "#ecd400",
@@ -35,21 +44,21 @@ function createField(width: number, height: number): SimulationField {
         visionRadius: 90,
         maxSatiety: 120,
         maxStamina: 80,
-        maxAge: 90,
+        oldAge: 90,
         satietyValue: 90,
         radius: 9,
         color: "#e20000",
     });
 
-    const field = new SimulationField(width, height, [herbivoreSpecie, carnivoreSpecie], 4);
-    for (let i = 0; i < 75; i++) {
-        field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), 50));
+    const field = new SimulationField(width, height, plantParams, [herbivoreSpecie, carnivoreSpecie]);
+    for (let i = 0; i < plantParams.startingCount; i++) {
+        field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), plantParams, randomRange(0, 0.75 * plantParams.oldAge)));
     }
     for (let i = 0; i < 40; i++) {
-        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), herbivoreSpecie, randomRange(0, 0.75 * herbivoreSpecie.maxAge)));
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), herbivoreSpecie, randomRange(0, 0.75 * herbivoreSpecie.oldAge)));
     }
     for (let i = 0; i < 12; i++) {
-        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), carnivoreSpecie, randomRange(0, 0.75 * carnivoreSpecie.maxAge)));
+        field.addAnimal(new Animal(field, Vector2.random(0, field.width, 0, field.height), carnivoreSpecie, randomRange(0, 0.75 * carnivoreSpecie.oldAge)));
     }
     return field;
 }

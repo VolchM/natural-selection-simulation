@@ -44,8 +44,8 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                 </div>
                 <ObjectStat label="Время жизни"
                             value={object.age}
-                            max={object.specie.maxAge}
-                            bad={object.specie.maxAge}
+                            max={object.specie.oldAge}
+                            bad={object.specie.oldAge}
                             good={0} />
                 <ObjectStat label="Выносливость"
                             value={object.stamina}
@@ -74,6 +74,11 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                     </svg>
                     Растение, ID: {object.id}
                 </div>
+                <ObjectStat label="Время жизни"
+                            value={object.age}
+                            max={object.plantParams.oldAge}
+                            bad={object.plantParams.oldAge}
+                            good={0} />
                 <ObjectStat label="Сытость при съедении:"
                             value={object.satietyValue} />
             </div>

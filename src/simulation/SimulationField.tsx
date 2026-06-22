@@ -3,24 +3,25 @@ import Plant from "./Plant.tsx";
 import Animal from "./Animal.tsx";
 import Vector2 from "./Vector2.tsx";
 import AnimalSpecie from "./AnimalSpecie.tsx";
+import type PlantParams from "./PlantParams.tsx";
 import { randomRange } from "../Utils.tsx";
 
 export default class SimulationField {
     private _width: number;
     private _height: number;
+    private _plantParams: PlantParams;
+    private _species: AnimalSpecie[];
     private _plants: Map<number, Plant>;
     private _animals: Map<number, Animal>;
-    private _simulationTime: number = 0;
     private _lastId: number = 0;
-    private _plantSpawnRate: number;
+    private _simulationTime: number = 0;
     private _plantSpawnCooldown: number = 0;
-    private _species: AnimalSpecie[];
 
-    constructor(width: number, height: number, species: AnimalSpecie[], plantSpawnRate: number) {
+    constructor(width: number, height: number, plantParams: PlantParams, species: AnimalSpecie[]) {
         this._width = width;
         this._height = height;
+        this._plantParams = plantParams;
         this._species = species;
-        this._plantSpawnRate = plantSpawnRate;
         this._plants = new Map<number, Plant>();
         this._animals = new Map<number, Animal>();
     }
@@ -29,6 +30,7 @@ export default class SimulationField {
     get height() { return this._height; }
     get plants() { return this._plants; }
     get animals() { return this._animals; }
+    get plantParams() { return this._plantParams; }
     get species() { return this._species; }
     get simulationTime() { return this._simulationTime; }
 
@@ -70,8 +72,10 @@ export default class SimulationField {
 
         this._plantSpawnCooldown -= deltaTime;
         if (this._plantSpawnCooldown <= 0) {
-            this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), 50));
-            this._plantSpawnCooldown = 1 / (this._plantSpawnRate * randomRange(0.5, 1.5));
+            for (let i = 0; i < this._plantParams.spawnRate; i++) {
+                this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), this._plantParams));
+            }
+            this._plantSpawnCooldown = randomRange(0.75, 1.25);
         }
         this._simulationTime += deltaTime;
     }

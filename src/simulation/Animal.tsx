@@ -48,9 +48,9 @@ export default class Animal extends SimulationObject {
         let staminaLoss = 12 * (currentSpeed / this._specie.maxSpeed);
         const staminaRegeneration = 15 * (1 - currentSpeed / this._specie.maxSpeed) * (this._satiety / this._specie.maxSatiety) ** (1/3);
         let satietyLoss = 2;
-        if (this._age > this._specie.maxAge) {
-            staminaLoss = staminaLoss * (this._age + 1 - this._specie.maxAge) ** (1/3);
-            satietyLoss = satietyLoss * (this._age + 1 - this._specie.maxAge) ** (1/3);
+        if (this._age > this._specie.oldAge) {
+            staminaLoss = staminaLoss * (this._age + 1 - this._specie.oldAge) ** (1/3);
+            satietyLoss = satietyLoss * (this._age + 1 - this._specie.oldAge) ** (1/3);
         }
 
         this._age += deltaTime;

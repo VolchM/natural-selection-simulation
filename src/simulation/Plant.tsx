@@ -1,20 +1,35 @@
+import PlantParams from "./PlantParams.tsx";
 import SimulationField from "./SimulationField.tsx";
 import SimulationObject from "./SimulationObject.tsx"
 import Vector2 from "./Vector2.tsx";
 
 export default class Plant extends SimulationObject {
-    private _satietyValue: number;
+    private _plantParams: PlantParams;
+    private _age: number;
 
-    constructor(field: SimulationField, pos: Vector2, satietyValue: number) {
+    constructor(field: SimulationField, pos: Vector2, plantParams: PlantParams, age: number = 0) {
         super(field, pos);
 
-        this._satietyValue = satietyValue;
+        this._plantParams = plantParams;
+        this._age = age;
     }
 
-    get satietyValue() { return this._satietyValue; }
-    get radius() { return 5; }
+    get age() { return this._age; }
+    get plantParams() { return this._plantParams; }
+    get radius() { return this._plantParams.radius * Math.sqrt(this.satietyValue / this._plantParams.satietyValue); }
+    get satietyValue() {
+        if (this._age > this._plantParams.oldAge) {
+            return this._plantParams.satietyValue / ((this._age / this._plantParams.oldAge) ** 3);
+        }
+        return this._plantParams.satietyValue;
+    }
 
-    update(_deltaTime: number) {}
+    update(deltaTime: number) {
+        this._age += deltaTime;
+        if (this.satietyValue < 0.35 * this._plantParams.satietyValue) {
+            this.field.removeObjectById(this.id);
+        }
+    }
 
     render(selectObject: (object: SimulationObject) => void) {
         return (
@@ -23,7 +38,7 @@ export default class Plant extends SimulationObject {
                 cx={this.pos.x}
                 cy={this.pos.y}
                 r={this.radius}
-                fill="#1a9e00"
+                fill={this._plantParams.color}
                 cursor="pointer"
                 onClick={() => selectObject(this)}
             />
