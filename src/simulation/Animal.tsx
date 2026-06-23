@@ -1,4 +1,4 @@
-import AnimalSpecie, { AnimalDiet, Sex } from "./AnimalSpecie.tsx";
+import AnimalSpecie, { AnimalDiet, Sex, type AnimalStats } from "./AnimalSpecie.tsx";
 import Plant from "./Plant.tsx";
 import SimulationField from "./SimulationField.tsx";
 import SimulationObject from "./SimulationObject.tsx"
@@ -7,6 +7,7 @@ import { clamp, randomRange } from "../Utils.tsx";
 
 export default class Animal extends SimulationObject {
     private _specie: AnimalSpecie;
+    private _stats: AnimalStats;
 
     private _stamina: number;
     private _satiety: number;
@@ -20,12 +21,13 @@ export default class Animal extends SimulationObject {
     private _directionChangeTimer: number = 0.0;
     private _restTimer: number = 0.0;
 
-    constructor(field: SimulationField, pos: Vector2, specie: AnimalSpecie, age: number = 0) {
+    constructor(field: SimulationField, pos: Vector2, specie: AnimalSpecie, stats: AnimalStats, age: number) {
         super(field, pos);
 
         this._specie = specie;
-        this._stamina = randomRange(0.75, 1.0) * specie.maxStamina;
-        this._satiety = randomRange(0.75, 1.0) * specie.maxSatiety;
+        this._stats = stats;
+        this._stamina = randomRange(0.75, 1.0) * this._stats.maxStamina;
+        this._satiety = randomRange(0.75, 1.0) * this._stats.maxSatiety;
         this._age = age;
         this._sex = Math.random() < 0.5 ? Sex.Male : Sex.Female;
 
@@ -33,6 +35,7 @@ export default class Animal extends SimulationObject {
     }
 
     get specie() { return this._specie; }
+    get stats() { return this._stats; }
     get radius() { return this._specie.radius; }
 
     get stamina() { return this._stamina; }
@@ -44,19 +47,19 @@ export default class Animal extends SimulationObject {
     update(deltaTime: number) {
         this.animalBehaviour(deltaTime);
 
-        const currentSpeed = this._speedMult * this._specie.maxSpeed * (1/3 + (this._stamina / this._specie.maxStamina) * 2/3);
-        let staminaLoss = 12 * (currentSpeed / this._specie.maxSpeed);
-        const staminaRegeneration = 15 * (1 - currentSpeed / this._specie.maxSpeed) * (this._satiety / this._specie.maxSatiety) ** (1/3);
+        const currentSpeed = this._speedMult * this._stats.maxSpeed * (1/3 + (this._stamina / this._stats.maxStamina) * 2/3);
+        let staminaLoss = 12 * (currentSpeed / this._stats.maxSpeed);
+        const staminaRegeneration = 15 * (1 - currentSpeed / this._stats.maxSpeed) * (this._satiety / this._stats.maxSatiety) ** (1/3);
         let satietyLoss = 2;
-        if (this._age > this._specie.oldAge) {
-            staminaLoss = staminaLoss * (this._age + 1 - this._specie.oldAge) ** (1/3);
-            satietyLoss = satietyLoss * (this._age + 1 - this._specie.oldAge) ** (1/3);
+        if (this._age > this._stats.oldAge) {
+            staminaLoss = staminaLoss * (this._age + 1 - this._stats.oldAge) ** (1/3);
+            satietyLoss = satietyLoss * (this._age + 1 - this._stats.oldAge) ** (1/3);
         }
 
         this._age += deltaTime;
         this._reproductionTimer = Math.max(this._reproductionTimer - deltaTime, 0);
-        this._stamina = clamp(this._stamina + (staminaRegeneration - staminaLoss) * deltaTime, 0, this._specie.maxStamina);
-        this._satiety = clamp(this._satiety - satietyLoss * deltaTime, 0, this._specie.maxSatiety);
+        this._stamina = clamp(this._stamina + (staminaRegeneration - staminaLoss) * deltaTime, 0, this._stats.maxStamina);
+        this._satiety = clamp(this._satiety - satietyLoss * deltaTime, 0, this._stats.maxSatiety);
         if (this._satiety <= 0) {
             // При полном отсутствии сытости животное умирает
             this.field.removeObjectById(this.id);
@@ -87,12 +90,12 @@ export default class Animal extends SimulationObject {
     canReproduce() {
         return this._age >= 12.0
                && this._reproductionTimer <= 0
-               && this._satiety >= 0.5 * this._specie.maxSatiety;
+               && this._satiety >= 0.5 * this._stats.maxSatiety;
     }
 
     reproduce() {
-        this._satiety -= 25;
-        this._reproductionTimer = randomRange(6.0, 10.0);
+        this._satiety -= 0.2 * this._stats.maxSatiety;
+        this._reproductionTimer = randomRange(8.0, 12.0);
     }
 
     private animalBehaviour(deltaTime: number) {
@@ -103,7 +106,7 @@ export default class Animal extends SimulationObject {
             return;
         }
 
-        if (this._stamina <= 0.05 * this._specie.maxStamina) {
+        if (this._stamina <= 0.05 * this._stats.maxStamina) {
             // Остановиться отдохнуть при почти полном отсутствии выносливости
             this._restTimer = randomRange(0.5, 1.0);
             this._speedMult = 0.0;
@@ -123,7 +126,7 @@ export default class Animal extends SimulationObject {
 
         if (this._specie.diet == AnimalDiet.Herbivore) {
             const closestPlant: Plant | null = this.closestInVisionRange(this.field.plants.values());
-            if (closestPlant !== null && (this._specie.maxSatiety - this._satiety >= 0.7 * closestPlant.satietyValue)) {
+            if (closestPlant !== null && (this._stats.maxSatiety - this._satiety >= 0.7 * closestPlant.satietyValue)) {
                 if (this.pos.distanceTo(closestPlant.pos) <= Math.max(this.radius, closestPlant.radius)) {
                     // Съесть растение
                     this.eat(closestPlant.satietyValue);
@@ -140,10 +143,10 @@ export default class Animal extends SimulationObject {
                 this.field.animals.values(),
                 animal => this._specie.isEating(animal.specie.name)
             );
-            if (closestPrey !== null && (this._specie.maxSatiety - this._satiety >= 0.7 * closestPrey.specie.satietyValue)) {
+            if (closestPrey !== null && (this._stats.maxSatiety - this._satiety >= 0.7 * closestPrey.stats.satietyValue)) {
                 if (this.pos.distanceTo(closestPrey.pos) <= Math.max(this.radius, closestPrey.radius)) {
                     // Съесть добычу
-                    this.eat(closestPrey._specie.satietyValue);
+                    this.eat(closestPrey._stats.satietyValue);
                     this.field.removeObjectById(closestPrey.id);
                 } else {
                     // Рядом добыча, бежать за ней
@@ -154,12 +157,12 @@ export default class Animal extends SimulationObject {
             }
         }
 
-        if (this._stamina <= 0.3 * this._specie.maxStamina) {
+        if (this._stamina <= 0.3 * this._stats.maxStamina) {
             // Остановиться отдохнуть при малой выносливости
             this._speedMult = 0;
             this._restTimer = randomRange(1.0, 2.0);
             return;
-        } else if (this._satiety <= 0.45 * this._specie.maxSatiety) {
+        } else if (this._satiety <= 0.45 * this._stats.maxSatiety) {
             // Искать еду с повышенной скоростью
             this.moveRandomly(deltaTime, 0.8);
             return;
@@ -177,7 +180,13 @@ export default class Animal extends SimulationObject {
                     // Создать потомство
                     this.reproduce();
                     closestPartner.reproduce();
-                    this.field.addAnimal(new Animal(this.field, this.pos.add(Vector2.randomDirection().mult(5)), this._specie));
+                    this.field.addAnimal(new Animal(
+                        this.field,
+                        this.pos.add(Vector2.randomDirection().mult(5)),
+                        this._specie,
+                        this._specie.mixAnimalStats(this._stats, closestPartner.stats),
+                        0,
+                    ));
                 } else {
                     // Идти к животному для размножения
                     this._speedMult = 0.7;
@@ -211,7 +220,7 @@ export default class Animal extends SimulationObject {
         for (const obj of objects) {
             if (filter === undefined || filter(obj)) {
                 const distance = this.pos.distanceTo(obj.pos);
-                if (distance <= this._specie.visionRadius + obj.radius && distance <= minDistance) {
+                if (distance <= this._stats.visionRadius + obj.radius && distance <= minDistance) {
                     minDistance = distance;
                     closestObject = obj;
                 }
@@ -221,6 +230,6 @@ export default class Animal extends SimulationObject {
     }
 
     private eat(satietyValue: number) {
-        this._satiety = clamp(this._satiety + satietyValue, 0, this._specie.maxSatiety);
+        this._satiety = clamp(this._satiety + satietyValue, 0, this._stats.maxSatiety);
     }
 }
