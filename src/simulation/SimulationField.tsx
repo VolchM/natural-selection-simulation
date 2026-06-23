@@ -29,7 +29,7 @@ export default class SimulationField {
             const stats = this._plantParams.randomStats();
             this.addPlant(new Plant(this, this.randomPos(), this._plantParams, stats, randomRange(0, 0.75 * stats.oldAge)));
         }
-        for (const specie of species) {
+        for (const specie of this._species) {
             for (let i = 0; i < specie.startingCount; i++) {
                 const stats = specie.randomStats();
                 this.addAnimal(new Animal(this, this.randomPos(), specie, stats, randomRange(0, 0.75 * stats.oldAge)));

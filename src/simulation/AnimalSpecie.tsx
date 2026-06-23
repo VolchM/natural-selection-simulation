@@ -13,6 +13,18 @@ export type AnimalStatName = "maxSpeed" | "visionRadius" | "maxStamina" | "maxSa
 export type InheritedStats = Record<AnimalStatName, RandomizedStat>;
 export type AnimalStats = Record<AnimalStatName, number>;
 
+export type AnimalSpecieArgs = { 
+    name: string,
+    diet: AnimalDiet,
+    eats?: string[],
+    startingCount: number,
+    inheritedStats: InheritedStats,
+    mutationChance: number,
+    randomDeviation: number,
+    radius: number,
+    color: string
+}
+
 export default class AnimalSpecie {
     readonly name: string;
     readonly diet: AnimalDiet;
@@ -26,10 +38,7 @@ export default class AnimalSpecie {
     readonly radius: number;
     readonly color: string;
 
-    constructor(args: { name: string, diet: AnimalDiet, eats?: string[],
-                        startingCount: number, inheritedStats: InheritedStats,
-                        mutationChance: number, randomDeviation: number,
-                        radius: number, color: string }) {
+    constructor(args: AnimalSpecieArgs) {
         this.name = args.name;
         this.diet = args.diet;
         this.eats = args.eats ?? [];

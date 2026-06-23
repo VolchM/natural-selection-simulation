@@ -12,6 +12,7 @@ body {
     background-color: var(--bg);
     font-family: sans-serif;
     color: var(--text);
+    margin: 4px;
 }
 
 h2 {

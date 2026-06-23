@@ -1,0 +1,13 @@
+.input-row {
+    display: flex;
+    margin: 5px;
+    justify-content: space-between;
+    align-items: center;
+    text-wrap: nowrap;
+}
+
+.input-field {
+    font-size: 1rem;
+    width: 53px;
+    color-scheme: dark;
+}

@@ -1,0 +1,36 @@
+.simulation-params {
+    min-width: 350px;
+    overflow-y: auto;
+    max-height: 98vh;
+}
+
+.simulation-params .note {
+    font-size: 0.85rem;
+    text-align: center;
+    color: #cccccc;
+    margin: 5px;
+}
+
+.simulation-params .subtitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 5px;
+}
+
+.object-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 5px;
+    text-align: center;
+
+    svg {
+        vertical-align: middle;
+    }
+}
+
+.reset-params {
+    font-size: 1rem;
+    color-scheme: dark;
+    margin: 10px;
+}

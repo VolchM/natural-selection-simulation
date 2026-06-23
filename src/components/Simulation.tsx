@@ -1,11 +1,11 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import SimulationField from "../simulation/SimulationField.tsx";
-import AnimalSpecie, { AnimalDiet } from "../simulation/AnimalSpecie.tsx";
+import AnimalSpecie, { AnimalDiet, type AnimalSpecieArgs } from "../simulation/AnimalSpecie.tsx";
 import RandomizedStat from "../simulation/RandomizedStat.tsx";
-import PlantParams from "../simulation/PlantParams.tsx";
+import PlantParams, { type PlantParamsArgs } from "../simulation/PlantParams.tsx";
 import SimulationObject from "../simulation/SimulationObject.tsx";
 import Animal from "../simulation/Animal.tsx";
-import SimulationParams from "./SimulationParams.tsx";
+import SimulationParamsInput from "./SimulationParamsInput.tsx";
 import SimulationControls from "./SimulationControls.tsx";
 import SimulationStats from "./SimulationStats.tsx";
 import ObjectInfo from "./ObjectInfo.tsx";
@@ -13,65 +13,81 @@ import plusIcon from "../assets/plus.svg";
 import minusIcon from "../assets/minus.svg";
 import "./Simulation.css";
 
-function createField(width: number, height: number): SimulationField {
-    const plantParams = new PlantParams({
+export type SimulationParams = {
+    width: number,
+    height: number,
+    plantParams: PlantParamsArgs,
+    species: AnimalSpecieArgs[]
+}
+
+export const defaultSimulationParams: SimulationParams = {
+    width: 1400,
+    height: 1400,
+    plantParams: {
         startingCount: 40,
         spawnRate: 5,
         satietyValue: new RandomizedStat(50, 10),
         oldAge: new RandomizedStat(30, 5),
         radius: 5,
         color: "#1a9e00"
-    });
-    const herbivoreSpecie = new AnimalSpecie({
-        name: "Травоядное",
-        diet: AnimalDiet.Herbivore,
-        startingCount: 60,
-        inheritedStats: {
-            maxSpeed: new RandomizedStat(50, 10),
-            visionRadius: new RandomizedStat(90, 10),
-            maxSatiety: new RandomizedStat(100, 15),
-            maxStamina: new RandomizedStat(70, 12),
-            oldAge: new RandomizedStat(120, 20),
-            satietyValue: new RandomizedStat(70, 10),
+    },
+    species: [
+        {
+            name: "Травоядное",
+            diet: AnimalDiet.Herbivore,
+            startingCount: 60,
+            inheritedStats: {
+                maxSpeed: new RandomizedStat(50, 10),
+                visionRadius: new RandomizedStat(90, 10),
+                maxSatiety: new RandomizedStat(100, 15),
+                maxStamina: new RandomizedStat(70, 12),
+                oldAge: new RandomizedStat(120, 20),
+                satietyValue: new RandomizedStat(70, 10),
+            },
+            mutationChance: 0.15,
+            randomDeviation: 0.02,
+            radius: 7,
+            color: "#ecd400",
         },
-        mutationChance: 0.15,
-        randomDeviation: 0.02,
-        radius: 7,
-        color: "#ecd400",
-    });
-    const carnivoreSpecie = new AnimalSpecie({
-        name: "Плотоядное",
-        diet: AnimalDiet.Carnivore,
-        eats: ["Травоядное"],
-        startingCount: 18,
-        inheritedStats: {
-            maxSpeed: new RandomizedStat(75, 10),
-            visionRadius: new RandomizedStat(90, 10),
-            maxSatiety: new RandomizedStat(120, 18),
-            maxStamina: new RandomizedStat(80, 15),
-            oldAge: new RandomizedStat(90, 15),
-            satietyValue: new RandomizedStat(80, 15),
-        },
-        mutationChance: 0.15,
-        randomDeviation: 0.02,
-        radius: 9,
-        color: "#e20000",
-    });
-    return new SimulationField(width, height, plantParams, [herbivoreSpecie, carnivoreSpecie]);;
+        {
+            name: "Плотоядное",
+            diet: AnimalDiet.Carnivore,
+            eats: ["Травоядное"],
+            startingCount: 18,
+            inheritedStats: {
+                maxSpeed: new RandomizedStat(75, 10),
+                visionRadius: new RandomizedStat(90, 10),
+                maxSatiety: new RandomizedStat(120, 18),
+                maxStamina: new RandomizedStat(80, 15),
+                oldAge: new RandomizedStat(90, 15),
+                satietyValue: new RandomizedStat(80, 15),
+            },
+            mutationChance: 0.15,
+            randomDeviation: 0.02,
+            radius: 9,
+            color: "#e20000",
+        }
+    ]
 }
 
-type SimulationProps = {
-    targetFPS: number,
+function createField(simulationParams: SimulationParams): SimulationField {
+    return new SimulationField(
+        simulationParams.width,
+        simulationParams.height,
+        new PlantParams(simulationParams.plantParams),
+        simulationParams.species.map(args => new AnimalSpecie(args))
+    );
 }
 
-export default function Simulation({ targetFPS }: SimulationProps): React.JSX.Element {
-    const width = 1500, height = 1200;
-    const [field, setField] = useState(createField(width, height));
+export default function Simulation({ targetFPS }: { targetFPS: number }): React.JSX.Element {
+    const [simulationParams, setSimulationParams] = useState(defaultSimulationParams);
+    const [field, setField] = useState(createField(simulationParams));
     const [paused, setPaused] = useState(false);
     const [speed, setSpeed] = useState(1.0);
     const [selectedObjectId, setSelectedObjectId] = useState<number | null>(null);
     const [zoom, setZoom] = useState(1.0);
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
+    const formRef = useRef<HTMLFormElement>(null);
 
     function selectObject(object: SimulationObject) {
         setSelectedObjectId(object.id);
@@ -80,10 +96,10 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
         setSelectedObjectId(null);
     }
 
-    let selectedObject: SimulationObject | null = null;
-    if (selectedObjectId !== null) {
-        selectedObject = field.getObjectById(selectedObjectId) ?? null;
-        if (selectedObject == null) setSelectedObjectId(null);
+    function handleReset() {
+        if (formRef.current?.reportValidity()) {
+            setField(createField(simulationParams));
+        }
     }
 
     // Цикл обновления симуляции
@@ -118,12 +134,17 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
 
         return () => cancelAnimationFrame(requestID);
     }, [field, targetFPS, paused, speed]);
-    
 
     const speciesCount = field.species.map(curSpecie => ({
         specie: curSpecie,
         count: [...field.animals.values()].filter(animal => animal.specie === curSpecie).length
     }));
+
+    let selectedObject: SimulationObject | null = null;
+    if (selectedObjectId !== null) {
+        selectedObject = field.getObjectById(selectedObjectId) ?? null;
+        if (selectedObject == null) setSelectedObjectId(null);
+    }
 
     const selectedObjectGraphics: React.JSX.Element[] = [];
     if (selectedObject !== null) {
@@ -135,7 +156,7 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
 
     return (
         <div className="simulation">
-            <SimulationParams />
+            <SimulationParamsInput value={simulationParams} onChange={setSimulationParams} formRef={formRef} />
             <div className="container field-container">
                 <div className="field-scroll">
                     <svg className="field" width={field.width * zoom} height={field.height * zoom} viewBox={`0 0 ${field.width} ${field.height}`}>
@@ -149,7 +170,7 @@ export default function Simulation({ targetFPS }: SimulationProps): React.JSX.El
             </div>
             <div className="container simulation-info">
                 <SimulationControls paused={paused} onPausedChange={setPaused}
-                                    onReset={() => setField(createField(width, height))}
+                                    onReset={handleReset}
                                     speed={speed} onSpeedChange={setSpeed} />
                 <hr/>
                 <SimulationStats simulationTime={field.simulationTime} plantsCount={field.plants.size} speciesCount={speciesCount} />
