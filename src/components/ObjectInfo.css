@@ -6,11 +6,18 @@
 
 .object-info div:first-child {
     font-size: 1.2rem;
+    font-weight: bold;
     margin-top: 5px;
 
     svg {
         vertical-align: middle;
     }
+}
+
+.object-info .subtitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 12px 5px;
 }
 
 .object-stat {

@@ -57,12 +57,31 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                             max={object.stats.maxSatiety}
                             bad={0}
                             good={object.stats.maxSatiety} />
+                <div className="subtitle">Наследуемые характеристики</div>
                 <ObjectStat label="Максимальная скорость"
-                            value={object.stats.maxSpeed} />
+                            value={object.stats.maxSpeed}
+                            bad={object.specie.inheritedStats.maxSpeed.min}
+                            good={object.specie.inheritedStats.maxSpeed.max} />
                 <ObjectStat label="Радиус зрения"
-                            value={object.stats.visionRadius} />
+                            value={object.stats.visionRadius}
+                            bad={object.specie.inheritedStats.visionRadius.min}
+                            good={object.specie.inheritedStats.visionRadius.max} />
+                <ObjectStat label="Время старости"
+                            value={object.stats.oldAge}
+                            bad={object.specie.inheritedStats.oldAge.min}
+                            good={object.specie.inheritedStats.oldAge.max} />
+                <ObjectStat label="Максимальная выносливость"
+                            value={object.stats.maxStamina}
+                            bad={object.specie.inheritedStats.maxStamina.min}
+                            good={object.specie.inheritedStats.maxStamina.max} />
+                <ObjectStat label="Максимальная сытость"
+                            value={object.stats.maxSatiety}
+                            bad={object.specie.inheritedStats.maxSatiety.min}
+                            good={object.specie.inheritedStats.maxSatiety.max} />
                 <ObjectStat label="Сытость при съедении"
-                            value={object.stats.satietyValue} />
+                            value={object.stats.satietyValue}
+                            bad={object.specie.inheritedStats.satietyValue.min}
+                            good={object.specie.inheritedStats.satietyValue.max} />
             </div>
         );
     } else if (object instanceof Plant) {
@@ -76,11 +95,13 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                 </div>
                 <ObjectStat label="Время жизни"
                             value={object.age}
-                            max={object.plantParams.oldAge}
-                            bad={object.plantParams.oldAge}
+                            max={object.stats.oldAge}
+                            bad={object.stats.oldAge}
                             good={0} />
                 <ObjectStat label="Сытость при съедении:"
-                            value={object.satietyValue} />
+                            value={object.satietyValue}
+                            bad={0}
+                            good={object.plantParams.satietyValue.max} />
             </div>
         );
     } else {

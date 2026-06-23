@@ -20,8 +20,8 @@ function createField(width: number, height: number): SimulationField {
     const plantParams = new PlantParams({
         startingCount: 40,
         spawnRate: 5,
-        satietyValue: 50,
-        oldAge: 30,
+        satietyValue: new RandomizedStat(50, 10),
+        oldAge: new RandomizedStat(30, 5),
         radius: 5,
         color: "#1a9e00"
     });
@@ -61,7 +61,8 @@ function createField(width: number, height: number): SimulationField {
 
     const field = new SimulationField(width, height, plantParams, [herbivoreSpecie, carnivoreSpecie]);
     for (let i = 0; i < plantParams.startingCount; i++) {
-        field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), plantParams, randomRange(0, 0.75 * plantParams.oldAge)));
+        const stats = plantParams.randomStats();
+        field.addPlant(new Plant(field, Vector2.random(0, field.width, 0, field.height), plantParams, stats, randomRange(0, 0.75 * stats.oldAge)));
     }
     for (let i = 0; i < 60; i++) {
         const stats = herbivoreSpecie.randomStats();

@@ -73,7 +73,7 @@ export default class SimulationField {
         this._plantSpawnCooldown -= deltaTime;
         if (this._plantSpawnCooldown <= 0) {
             for (let i = 0; i < this._plantParams.spawnRate; i++) {
-                this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), this._plantParams));
+                this.addPlant(new Plant(this, Vector2.random(0, this._width, 0, this._height), this._plantParams, this._plantParams.randomStats()));
             }
             this._plantSpawnCooldown = randomRange(0.75, 1.25);
         }
