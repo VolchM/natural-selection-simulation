@@ -7,10 +7,11 @@ import SimulationObject from "../simulation/SimulationObject.tsx";
 import Animal from "../simulation/Animal.tsx";
 import SimulationParamsInput from "./SimulationParamsInput.tsx";
 import SimulationControls from "./SimulationControls.tsx";
-import SimulationStats from "./SimulationStats.tsx";
+import SimulationStats, { type SimulationStep } from "./SimulationStats.tsx";
 import ObjectInfo from "./ObjectInfo.tsx";
 import plusIcon from "../assets/plus.svg";
 import minusIcon from "../assets/minus.svg";
+import SimulationHistoryGraph, { type SimulationHistory } from "./SimulationHistoryGraph.tsx";
 import "./Simulation.css";
 
 export type SimulationParams = {
@@ -85,6 +86,18 @@ function createField(simulationParams: SimulationParams): SimulationField {
     );
 }
 
+function getSimulationStep(field: SimulationField): SimulationStep {
+    const speciesCount = field.species.map(curSpecie => ({
+        specie: curSpecie,
+        count: [...field.animals.values()].filter(animal => animal.specie === curSpecie).length
+    }));
+    return {
+        simulationTime: field.simulationTime,
+        plantsCount: field.plants.size,
+        speciesCount: speciesCount
+    };
+}
+
 export default function Simulation({ targetFPS }: { targetFPS: number }): React.JSX.Element {
     const [simulationParams, setSimulationParams] = useState(defaultSimulationParams);
     const [field, setField] = useState(createField(simulationParams));
@@ -92,6 +105,7 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
     const [speed, setSpeed] = useState(1.0);
     const [selectedObjectId, setSelectedObjectId] = useState<number | null>(null);
     const [zoom, setZoom] = useState(1.0);
+    const [simulationHistory, setSimulationHistory] = useState<SimulationHistory>([getSimulationStep(field)]);
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
     const formRef = useRef<HTMLFormElement>(null);
 
@@ -104,7 +118,9 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
 
     function handleReset() {
         if (formRef.current?.reportValidity()) {
-            setField(createField(simulationParams));
+            const field = createField(simulationParams);
+            setField(field);
+            setSimulationHistory([getSimulationStep(field)]);
         }
     }
 
@@ -133,6 +149,7 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
                     // Окно не было активным
                     field.update(targetFrameLength * speed);
                 }
+                simulationHistory.push(getSimulationStep(field));
                 redrawField();
             }
             requestID = requestAnimationFrame(step);
@@ -141,10 +158,6 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
         return () => cancelAnimationFrame(requestID);
     }, [field, targetFPS, paused, speed]);
 
-    const speciesCount = field.species.map(curSpecie => ({
-        specie: curSpecie,
-        count: [...field.animals.values()].filter(animal => animal.specie === curSpecie).length
-    }));
 
     let selectedObject: SimulationObject | null = null;
     if (selectedObjectId !== null) {
@@ -179,7 +192,9 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
                                     onReset={handleReset}
                                     speed={speed} onSpeedChange={setSpeed} />
                 <hr/>
-                <SimulationStats simulationTime={field.simulationTime} plantsCount={field.plants.size} speciesCount={speciesCount} />
+                <SimulationStats simulationStep={simulationHistory.at(-1)!} />
+                <hr/>
+                <SimulationHistoryGraph simulationHistory={simulationHistory} minWidth={250} maxWidth={400} minHeight={150} maxHeight={400}/>
                 <hr/>
                 <ObjectInfo object={selectedObject} />
             </div>

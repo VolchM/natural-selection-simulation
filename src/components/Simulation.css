@@ -29,7 +29,9 @@
 }
 
 .simulation-info {
-    min-width: 300px;
+    min-width: 400px;
+    overflow-y: auto;
+    max-height: 98vh;
 }
 
 .zoom-button {
