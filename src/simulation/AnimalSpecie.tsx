@@ -19,6 +19,9 @@ export type AnimalSpecieArgs = {
     eats?: string[],
     startingCount: number,
     inheritedStats: InheritedStats,
+    satietyLoss: number,
+    reproductionCooldown: number,
+    reproductionCost: number,
     mutationChance: number,
     randomDeviation: number,
     radius: number,
@@ -32,6 +35,9 @@ export default class AnimalSpecie {
     readonly startingCount: number;
 
     readonly inheritedStats: InheritedStats;
+    readonly satietyLoss: number;
+    readonly reproductionCooldown: number;
+    readonly reproductionCost: number;
     readonly mutationChance: number;
     readonly randomDeviation: number;
 
@@ -44,6 +50,9 @@ export default class AnimalSpecie {
         this.eats = args.eats ?? [];
         this.startingCount = args.startingCount;
         this.inheritedStats = args.inheritedStats;
+        this.satietyLoss = args.satietyLoss;
+        this.reproductionCooldown = args.reproductionCooldown;
+        this.reproductionCost = args.reproductionCost;
         this.mutationChance = args.mutationChance;
         this.randomDeviation = args.randomDeviation;
         this.radius = args.radius;

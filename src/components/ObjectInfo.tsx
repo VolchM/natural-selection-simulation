@@ -15,7 +15,7 @@ type ObjectStatProps = {
 function ObjectStat({ label, value, max, bad, good }: ObjectStatProps): React.JSX.Element {
     const valueString = max === undefined ? value.toFixed(0) : `${value.toFixed(0)}/${max.toFixed(0)}`
     let hue = null;
-    if (bad !== undefined && good !== undefined) {
+    if (bad !== undefined && good !== undefined && bad !== good) {
         hue = (value - bad) / (good - bad) * 120; // Цвет от красного до зелёного
     }
 

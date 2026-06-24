@@ -20,6 +20,7 @@ export default class Animal extends SimulationObject {
     private _reproductionTimer: number = 0.0;
     private _directionChangeTimer: number = 0.0;
     private _restTimer: number = 0.0;
+    private _lastSeenPartnerPos: Vector2 | null = null;
 
     constructor(field: SimulationField, pos: Vector2, specie: AnimalSpecie, stats: AnimalStats, age: number) {
         super(field, pos);
@@ -50,7 +51,7 @@ export default class Animal extends SimulationObject {
         const currentSpeed = this._speedMult * this._stats.maxSpeed * (1/3 + (this._stamina / this._stats.maxStamina) * 2/3);
         let staminaLoss = 12 * (currentSpeed / this._stats.maxSpeed);
         const staminaRegeneration = 15 * (1 - currentSpeed / this._stats.maxSpeed) * (this._satiety / this._stats.maxSatiety) ** (1/3);
-        let satietyLoss = 2;
+        let satietyLoss = this._specie.satietyLoss;
         if (this._age > this._stats.oldAge) {
             staminaLoss = staminaLoss * (this._age + 1 - this._stats.oldAge) ** (1/3);
             satietyLoss = satietyLoss * (this._age + 1 - this._stats.oldAge) ** (1/3);
@@ -88,14 +89,14 @@ export default class Animal extends SimulationObject {
     }
 
     canReproduce() {
-        return this._age >= 12.0
+        return this._age >= this._specie.reproductionCooldown * 1.5
                && this._reproductionTimer <= 0
-               && this._satiety >= 0.5 * this._stats.maxSatiety;
+               && this._satiety >= 0.65 * this._stats.maxSatiety;
     }
 
     reproduce() {
-        this._satiety -= 0.2 * this._stats.maxSatiety;
-        this._reproductionTimer = randomRange(8.0, 12.0);
+        this._satiety -= this._specie.reproductionCost;
+        this._reproductionTimer = this._specie.reproductionCooldown;
     }
 
     private animalBehaviour(deltaTime: number) {
@@ -111,6 +112,14 @@ export default class Animal extends SimulationObject {
             this._restTimer = randomRange(0.5, 1.0);
             this._speedMult = 0.0;
             return;
+        }
+
+        const closestPotentialPartner: Animal | null = this.closestInVisionRange(
+            this.field.animals.values(),
+            animal => animal.specie.name == this._specie.name && animal.sex != this._sex
+        );
+        if (closestPotentialPartner !== null) {
+            this._lastSeenPartnerPos = closestPotentialPartner.pos;
         }
 
         const closestPredator: Animal | null = this.closestInVisionRange(
@@ -194,6 +203,12 @@ export default class Animal extends SimulationObject {
                 }
             } else {
                 // Искать партнёра
+                if (this._lastSeenPartnerPos !== null) {
+                    if (this.pos.distanceTo(this._lastSeenPartnerPos) > this._stats.visionRadius) {
+                        this._direction = this.pos.directionTo(this._lastSeenPartnerPos);
+                    }
+                    this._lastSeenPartnerPos = null;
+                }
                 this.moveRandomly(deltaTime, 0.6);
             }
             return;

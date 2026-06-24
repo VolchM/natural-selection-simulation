@@ -60,8 +60,9 @@ function AnimalSpecieInput({ value, onChange }: { value: AnimalSpecieArgs, onCha
             <RandomizedStatInput label="Макс. сытость" value={value.inheritedStats.maxSatiety} min={0} onChange={(x) => handleStatChange("maxSatiety", x)} />
             <RandomizedStatInput label="Время старости (cек)" value={value.inheritedStats.oldAge} min={0} onChange={(x) => handleStatChange("oldAge", x)} />
             <RandomizedStatInput label="Сытость при съедении" value={value.inheritedStats.satietyValue} min={0} onChange={(x) => handleStatChange("satietyValue", x)} />
-            <NumberInput label="Вероятность мутации (%)" value={value.mutationChance * 100} min={0} max={100} step={0.1} onChange={(x) => handleChange("mutationChance", x / 100)} />
-            <NumberInput label="Изменение характеристик (%)" value={value.randomDeviation * 100} min={0} max={5} step={0.1} onChange={(x) => handleChange("randomDeviation", x / 100)} />
+            <NumberInput label="Уменьшение сытости в сек" value={value.satietyLoss} min={0} step={0.1} onChange={(x) => handleChange("satietyLoss", x)} />
+            <NumberInput label="Пауза между размножениями (сек)" value={value.reproductionCooldown} min={0} onChange={(x) => handleChange("reproductionCooldown", x)} />
+            <NumberInput label="Трата сытости при размножении" value={value.reproductionCost} min={0} onChange={(x) => handleChange("reproductionCost", x)} />
         </div>
     );
 }
