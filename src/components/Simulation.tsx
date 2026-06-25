@@ -1,16 +1,14 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import SimulationField from "../simulation/SimulationField.tsx";
+import SimulationObject from "../simulation/SimulationObject.tsx";
 import AnimalSpecie, { AnimalDiet, type AnimalSpecieArgs } from "../simulation/AnimalSpecie.tsx";
 import RandomizedStat from "../simulation/RandomizedStat.tsx";
 import PlantParams, { type PlantParamsArgs } from "../simulation/PlantParams.tsx";
-import SimulationObject from "../simulation/SimulationObject.tsx";
-import Animal from "../simulation/Animal.tsx";
+import SimulationFieldView from "./SimulationFieldView.tsx";
 import SimulationParamsInput from "./SimulationParamsInput.tsx";
 import SimulationControls from "./SimulationControls.tsx";
 import SimulationStats, { type SimulationStep } from "./SimulationStats.tsx";
 import ObjectInfo from "./ObjectInfo.tsx";
-import plusIcon from "../assets/plus.svg";
-import minusIcon from "../assets/minus.svg";
 import SimulationHistoryGraph, { type SimulationHistory } from "./SimulationHistoryGraph.tsx";
 import "./Simulation.css";
 
@@ -104,17 +102,10 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
     const [paused, setPaused] = useState(false);
     const [speed, setSpeed] = useState(1.0);
     const [selectedObjectId, setSelectedObjectId] = useState<number | null>(null);
-    const [zoom, setZoom] = useState(1.0);
+    const [tempSelectedObjectId, setTempSelectedObjectId] = useState<number | null>(null);
     const [simulationHistory, setSimulationHistory] = useState<SimulationHistory>([getSimulationStep(field)]);
     const [,redrawField] = useReducer((tick) => tick + 1, 0);
     const formRef = useRef<HTMLFormElement>(null);
-
-    function selectObject(object: SimulationObject) {
-        setSelectedObjectId(object.id);
-    }
-    function deselectObject() {
-        setSelectedObjectId(null);
-    }
 
     function handleReset() {
         if (formRef.current?.reportValidity()) {
@@ -158,35 +149,17 @@ export default function Simulation({ targetFPS }: { targetFPS: number }): React.
         return () => cancelAnimationFrame(requestID);
     }, [field, targetFPS, paused, speed, simulationHistory]);
 
-
-    let selectedObject: SimulationObject | null = null;
-    if (selectedObjectId !== null) {
-        selectedObject = field.getObjectById(selectedObjectId) ?? null;
-        if (selectedObject == null) setSelectedObjectId(null);
-    }
-
-    const selectedObjectGraphics: React.JSX.Element[] = [];
-    if (selectedObject !== null) {
-        selectedObjectGraphics.push(<circle key="outline" cx={selectedObject.pos.x} cy={selectedObject.pos.y} r={selectedObject.radius+3} fill="none" stroke="white" strokeWidth="2" />)
-        if (selectedObject instanceof Animal) {
-            selectedObjectGraphics.push(<circle key="vision-radius" cx={selectedObject.pos.x} cy={selectedObject.pos.y} r={selectedObject.stats.visionRadius} fill="none" stroke="#ffffff60" strokeWidth="2" strokeDasharray="10 20" />)
-        }
+    let selectedObject: SimulationObject | null = selectedObjectId === null ? null : field.getObjectById(selectedObjectId) ?? null;
+    if (selectedObject === null) {
+        selectedObject = tempSelectedObjectId === null ? null : field.getObjectById(tempSelectedObjectId) ?? null;
     }
 
     return (
         <div className="simulation">
             <SimulationParamsInput value={simulationParams} onChange={setSimulationParams} formRef={formRef} />
-            <div className="container field-container">
-                <div className="field-scroll">
-                    <svg className="field" width={field.width * zoom} height={field.height * zoom} viewBox={`0 0 ${field.width} ${field.height}`}>
-                        <rect width="100%" height="100%" fill="transparent" onClick={deselectObject}/>
-                        {field.renderObjects(selectObject)}
-                        {selectedObjectGraphics}
-                    </svg>
-                </div>
-                <button className="zoom-button zoom-plus" onClick={() => setZoom(zoom * 1.2)}><img src={plusIcon} /></button>
-                <button className="zoom-button zoom-minus" onClick={() => setZoom(zoom / 1.2)}><img src={minusIcon} /></button>
-            </div>
+            <SimulationFieldView field={field}
+                                 selectedObjectId={selectedObjectId} setSelectedObjectId={setSelectedObjectId}
+                                 tempSelectedObjectId={tempSelectedObjectId} setTempSelectedObjectId={setTempSelectedObjectId} />
             <div className="container simulation-info">
                 <SimulationControls paused={paused} onPausedChange={setPaused}
                                     onReset={handleReset}

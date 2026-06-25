@@ -16,11 +16,11 @@ export default abstract class SimulationObject {
     get id() { return this._id; }
     get pos() { return this._pos; }
     abstract get radius(): number;
+    abstract get color(): string;
+
+    abstract update(deltaTime: number): void;
 
     moveTo(pos: Vector2) {
         this._pos = pos;
     }
-
-    abstract update(deltaTime: number): void;
-    abstract render(selectObject: (object: SimulationObject) => void): React.JSX.Element;
 }

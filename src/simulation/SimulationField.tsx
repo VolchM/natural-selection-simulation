@@ -94,8 +94,4 @@ export default class SimulationField {
         }
         this._simulationTime += deltaTime;
     }
-
-    renderObjects(selectObject: (object: SimulationObject) => void): React.JSX.Element[] {
-        return [...this._plants.values(), ...this._animals.values()].map(obj => obj.render(selectObject));
-    }
 }

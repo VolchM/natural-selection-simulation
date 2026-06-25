@@ -1,0 +1,47 @@
+.field-container {
+    min-width: 500px;
+    line-height: 0;
+    position: relative;
+}
+
+.field-scroll {
+    overflow: auto;
+    max-height: 98vh;
+}
+
+.field {
+    background-color: var(--field-bg);
+    border: 2px dashed var(--border);
+    margin: 4px;
+}
+
+.zoom-button {
+    background-color: #ffffff;
+    opacity: 40%;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    margin: 5px;
+}
+
+.zoom-button:hover {
+    opacity: 50%;
+}
+
+.zoom-button:active {
+    opacity: 60%;
+}
+
+.zoom-plus {
+    position: absolute;
+    right: 15px;
+    bottom: 50px;
+}
+
+.zoom-minus {
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}

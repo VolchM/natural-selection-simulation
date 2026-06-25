@@ -26,25 +26,12 @@ export default class Plant extends SimulationObject {
         }
         return this._stats.satietyValue;
     }
+    get color() { return this._plantParams.color; }
 
     update(deltaTime: number) {
         this._age += deltaTime;
         if (this.satietyValue < 0.35 * this._plantParams.satietyValue.mean) {
             this.field.removeObjectById(this.id);
         }
-    }
-
-    render(selectObject: (object: SimulationObject) => void) {
-        return (
-            <circle
-                key={this.id}
-                cx={this.pos.x}
-                cy={this.pos.y}
-                r={this.radius}
-                fill={this._plantParams.color}
-                cursor="pointer"
-                onClick={() => selectObject(this)}
-            />
-        );
     }
 }

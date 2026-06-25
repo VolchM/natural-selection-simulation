@@ -107,7 +107,7 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
     } else {
         return (
             <div className="select-object">
-                Нажмите на объект, чтобы увидеть информацию о нём
+                Нажмите или наведите курсор на объект, чтобы увидеть информацию о нём
             </div>
         );
     }

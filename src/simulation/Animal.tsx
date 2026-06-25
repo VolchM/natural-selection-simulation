@@ -38,6 +38,7 @@ export default class Animal extends SimulationObject {
     get specie() { return this._specie; }
     get stats() { return this._stats; }
     get radius() { return this._specie.radius; }
+    get color() { return this._specie.color; }
 
     get stamina() { return this._stamina; }
     get satiety() { return this._satiety; }
@@ -72,20 +73,6 @@ export default class Animal extends SimulationObject {
         if (newPos.y < -this.radius) { newPos.y = this.field.height + this.radius; }
         if (newPos.y > this.field.height + this.radius) { newPos.y = -this.radius; }
         this.moveTo(newPos);
-    }
-
-    render(selectObject: (object: SimulationObject) => void): React.JSX.Element {
-        return (
-            <circle
-                key={this.id}
-                cx={this.pos.x}
-                cy={this.pos.y}
-                r={this._specie.radius}
-                fill={this._specie.color}
-                cursor="pointer"
-                onClick={() => selectObject(this)}
-            />
-        );
     }
 
     canReproduce() {
