@@ -50,8 +50,8 @@ export default class Animal extends SimulationObject {
         this.animalBehaviour(deltaTime);
 
         const currentSpeed = this._speedMult * this._stats.maxSpeed * (1/3 + (this._stamina / this._stats.maxStamina) * 2/3);
-        let staminaLoss = 12 * (currentSpeed / this._stats.maxSpeed);
-        const staminaRegeneration = 15 * (1 - currentSpeed / this._stats.maxSpeed) * (this._satiety / this._stats.maxSatiety) ** (1/3);
+        let staminaLoss = 10 * (currentSpeed / this._stats.maxSpeed);
+        const staminaRegeneration = 10 * (1 - currentSpeed / this._stats.maxSpeed) * (this._satiety / this._stats.maxSatiety) ** (1/3);
         let satietyLoss = this._specie.satietyLoss;
         if (this._age > this._stats.oldAge) {
             staminaLoss = staminaLoss * (this._age + 1 - this._stats.oldAge) ** (1/3);

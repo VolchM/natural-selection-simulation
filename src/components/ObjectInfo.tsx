@@ -66,10 +66,6 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                             value={object.stats.visionRadius}
                             bad={object.specie.inheritedStats.visionRadius.min}
                             good={object.specie.inheritedStats.visionRadius.max} />
-                <ObjectStat label="Время старости"
-                            value={object.stats.oldAge}
-                            bad={object.specie.inheritedStats.oldAge.min}
-                            good={object.specie.inheritedStats.oldAge.max} />
                 <ObjectStat label="Максимальная выносливость"
                             value={object.stats.maxStamina}
                             bad={object.specie.inheritedStats.maxStamina.min}
@@ -78,6 +74,10 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                             value={object.stats.maxSatiety}
                             bad={object.specie.inheritedStats.maxSatiety.min}
                             good={object.specie.inheritedStats.maxSatiety.max} />
+                <ObjectStat label="Время старости"
+                            value={object.stats.oldAge}
+                            bad={object.specie.inheritedStats.oldAge.min}
+                            good={object.specie.inheritedStats.oldAge.max} />
                 <ObjectStat label="Сытость при съедении"
                             value={object.stats.satietyValue}
                             bad={object.specie.inheritedStats.satietyValue.min}
