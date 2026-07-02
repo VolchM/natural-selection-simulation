@@ -1,10 +1,10 @@
-import SimulationObject from "./SimulationObject.tsx";
-import Plant from "./Plant.tsx";
-import Animal from "./Animal.tsx";
-import Vector2 from "./Vector2.tsx";
-import AnimalSpecie from "./AnimalSpecie.tsx";
-import type PlantParams from "./PlantParams.tsx";
-import { randomRange } from "../Utils.tsx";
+import SimulationObject from "./SimulationObject.ts";
+import Plant from "./Plant.ts";
+import Animal from "./Animal.ts";
+import Vector2 from "./Vector2.ts";
+import AnimalSpecie from "./AnimalSpecie.ts";
+import PlantParams from "./PlantParams.ts";
+import { randomRange } from "../Utils.ts";
 
 export default class SimulationField {
     readonly width: number;

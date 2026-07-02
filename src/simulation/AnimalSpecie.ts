@@ -1,5 +1,5 @@
-import { clamp, randomNormalDist } from "../Utils";
-import RandomizedStat from "./RandomizedStat";
+import { clamp, randomNormalDist } from "../Utils.ts";
+import RandomizedStat from "./RandomizedStat.ts";
 
 export enum Sex {
     Male, Female

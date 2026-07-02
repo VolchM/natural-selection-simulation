@@ -1,9 +1,9 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import SimulationField from "../simulation/SimulationField.tsx";
-import SimulationObject from "../simulation/SimulationObject.tsx";
-import AnimalSpecie, { type AnimalSpecieArgs } from "../simulation/AnimalSpecie.tsx";
-import RandomizedStat from "../simulation/RandomizedStat.tsx";
-import PlantParams, { type PlantParamsArgs } from "../simulation/PlantParams.tsx";
+import SimulationField from "../simulation/SimulationField.ts";
+import SimulationObject from "../simulation/SimulationObject.ts";
+import AnimalSpecie, { type AnimalSpecieArgs } from "../simulation/AnimalSpecie.ts";
+import RandomizedStat from "../simulation/RandomizedStat.ts";
+import PlantParams, { type PlantParamsArgs } from "../simulation/PlantParams.ts";
 import SimulationFieldView from "./SimulationFieldView.tsx";
 import SimulationParamsInput from "./SimulationParamsInput.tsx";
 import SimulationControls from "./SimulationControls.tsx";

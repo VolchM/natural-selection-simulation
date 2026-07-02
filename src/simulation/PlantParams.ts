@@ -1,4 +1,4 @@
-import type RandomizedStat from "./RandomizedStat";
+import RandomizedStat from "./RandomizedStat.ts";
 
 export type PlantStats = {
     readonly satietyValue: number,

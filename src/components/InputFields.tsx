@@ -1,4 +1,4 @@
-import RandomizedStat from "../simulation/RandomizedStat";
+import RandomizedStat from "../simulation/RandomizedStat.ts";
 import "./InputFields.css";
 
 export type NumberInputFieldProps = {

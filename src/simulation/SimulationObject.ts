@@ -1,5 +1,5 @@
-import SimulationField from "./SimulationField.tsx";
-import Vector2 from "./Vector2.tsx";
+import SimulationField from "./SimulationField.ts";
+import Vector2 from "./Vector2.ts";
 
 export default abstract class SimulationObject {
     readonly field: SimulationField;

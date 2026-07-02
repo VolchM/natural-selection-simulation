@@ -1,7 +1,7 @@
-import SimulationObject from "../simulation/SimulationObject";
-import Animal from "../simulation/Animal";
-import { Sex } from "../simulation/AnimalSpecie";
-import Plant from "../simulation/Plant";
+import SimulationObject from "../simulation/SimulationObject.ts";
+import Animal from "../simulation/Animal.ts";
+import { Sex } from "../simulation/AnimalSpecie.ts";
+import Plant from "../simulation/Plant.ts";
 import "./ObjectInfo.css";
 
 type ObjectStatProps = {

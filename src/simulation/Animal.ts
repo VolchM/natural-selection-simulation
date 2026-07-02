@@ -1,9 +1,9 @@
-import AnimalSpecie, { Sex, type AnimalStats } from "./AnimalSpecie.tsx";
-import Plant from "./Plant.tsx";
-import SimulationField from "./SimulationField.tsx";
-import SimulationObject from "./SimulationObject.tsx"
-import Vector2 from "./Vector2.tsx";
-import { clamp, randomRange } from "../Utils.tsx";
+import AnimalSpecie, { Sex, type AnimalStats } from "./AnimalSpecie.ts";
+import Plant from "./Plant.ts";
+import SimulationField from "./SimulationField.ts";
+import SimulationObject from "./SimulationObject.ts"
+import Vector2 from "./Vector2.ts";
+import { clamp, randomRange } from "../Utils.ts";
 
 export default class Animal extends SimulationObject {
     readonly specie: AnimalSpecie;

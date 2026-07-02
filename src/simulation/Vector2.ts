@@ -1,4 +1,4 @@
-import { randomRange } from "../Utils";
+import { randomRange } from "../Utils.ts";
 
 export default class Vector2 {
     x: number;

@@ -1,8 +1,8 @@
-import RandomizedStat from "../simulation/RandomizedStat";
-import { NumberInputField, NumberInputRow, RandomizedStatInputRow, TextInputField, SelectInputRow, ColorPickerRow } from "./InputFields";
-import type { PlantParamsArgs } from "../simulation/PlantParams";
-import type { AnimalSpecieArgs, AnimalStatName } from "../simulation/AnimalSpecie";
-import { defaultSimulationParams, type SimulationParams } from "./Simulation";
+import RandomizedStat from "../simulation/RandomizedStat.ts";
+import type { PlantParamsArgs } from "../simulation/PlantParams.ts";
+import type { AnimalSpecieArgs, AnimalStatName } from "../simulation/AnimalSpecie.ts";
+import { defaultSimulationParams, type SimulationParams } from "./Simulation.tsx";
+import { NumberInputField, NumberInputRow, RandomizedStatInputRow, TextInputField, SelectInputRow, ColorPickerRow } from "./InputFields.tsx";
 import deleteIcon from "../assets/delete.svg";
 import plusIcon from "../assets/plus.svg";
 import "./SimulationParamsInput.css";

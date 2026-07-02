@@ -1,4 +1,4 @@
-import { randomNormalDist } from "../Utils";
+import { randomNormalDist } from "../Utils.ts";
 
 export default class RandomizedStat {
     readonly mean: number;

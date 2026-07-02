@@ -1,7 +1,7 @@
-import PlantParams, { type PlantStats } from "./PlantParams.tsx";
-import SimulationField from "./SimulationField.tsx";
-import SimulationObject from "./SimulationObject.tsx"
-import Vector2 from "./Vector2.tsx";
+import PlantParams, { type PlantStats } from "./PlantParams.ts";
+import SimulationField from "./SimulationField.ts";
+import SimulationObject from "./SimulationObject.ts"
+import Vector2 from "./Vector2.ts";
 
 export default class Plant extends SimulationObject {
     readonly params: PlantParams;

@@ -1,6 +1,6 @@
-import SimulationField from "../simulation/SimulationField.tsx";
-import SimulationObject from "../simulation/SimulationObject.tsx";
-import Animal from "../simulation/Animal.tsx";
+import SimulationField from "../simulation/SimulationField.ts";
+import SimulationObject from "../simulation/SimulationObject.ts";
+import Animal from "../simulation/Animal.ts";
 import plusIcon from "../assets/plus.svg";
 import minusIcon from "../assets/minus.svg";
 import { useState } from "react";

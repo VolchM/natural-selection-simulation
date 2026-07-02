@@ -1,4 +1,4 @@
-import AnimalSpecie from "../simulation/AnimalSpecie";
+import AnimalSpecie from "../simulation/AnimalSpecie.ts";
 import "./SimulationStats.css";
 
 export type SimulationStep = {

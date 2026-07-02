@@ -1,5 +1,5 @@
-import { clamp } from "../Utils";
-import type { SimulationStep } from "./SimulationStats";
+import { clamp } from "../Utils.ts";
+import type { SimulationStep } from "./SimulationStats.tsx";
 
 export type SimulationHistory = SimulationStep[];
 
