@@ -6,14 +6,14 @@ export enum Sex {
 }
 
 export type AnimalStatName = "maxSpeed" | "visionRadius" | "maxStamina" | "maxSatiety" | "oldAge" | "satietyValue";
-export type InheritedStats = Record<AnimalStatName, RandomizedStat>;
-export type AnimalStats = Record<AnimalStatName, number>;
+export type AnimalInheritedStats = Readonly<Record<AnimalStatName, RandomizedStat>>;
+export type AnimalStats = Readonly<Record<AnimalStatName, number>>;
 
 export type AnimalSpecieArgs = { 
     name: string,
     eats: string[],
     startingCount: number,
-    inheritedStats: InheritedStats,
+    inheritedStats: AnimalInheritedStats,
     satietyLoss: number,
     reproductionCooldown: number,
     reproductionCost: number,
@@ -28,7 +28,7 @@ export default class AnimalSpecie {
     readonly eats: string[];
     readonly startingCount: number;
 
-    readonly inheritedStats: InheritedStats;
+    readonly inheritedStats: AnimalInheritedStats;
     readonly satietyLoss: number;
     readonly reproductionCooldown: number;
     readonly reproductionCost: number;
@@ -56,6 +56,10 @@ export default class AnimalSpecie {
         return this.eats.includes(otherName);
     }
 
+    isCarnivore(): boolean {
+        return this.eats.filter(x => x !== "Растение").length > 0;
+    }
+
     randomStats(): AnimalStats {
         return Object.fromEntries(
             Object.entries(this.inheritedStats).map(([key, value]) => [key, value.random()])
@@ -74,9 +78,5 @@ export default class AnimalSpecie {
                 }
             })
         ) as AnimalStats;
-    }
-
-    isCarnivore(): boolean {
-        return this.eats.filter(x => x !== "Растение").length > 0;
     }
 }

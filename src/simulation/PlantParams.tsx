@@ -1,8 +1,8 @@
 import type RandomizedStat from "./RandomizedStat";
 
 export type PlantStats = {
-    satietyValue: number,
-    oldAge: number,
+    readonly satietyValue: number,
+    readonly oldAge: number,
 }
 
 export type PlantParamsArgs = {
@@ -15,14 +15,14 @@ export type PlantParamsArgs = {
 }
 
 export default class PlantParams {
-    startingCount: number;
-    spawnRate: number;
+    readonly startingCount: number;
+    readonly spawnRate: number;
     
-    satietyValue: RandomizedStat;
-    oldAge: RandomizedStat;
+    readonly satietyValue: RandomizedStat;
+    readonly oldAge: RandomizedStat;
 
-    radius: number;
-    color: string;
+    readonly radius: number;
+    readonly color: string;
 
     constructor(args: PlantParamsArgs) {
         this.startingCount = args.startingCount;

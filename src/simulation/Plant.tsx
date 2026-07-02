@@ -4,33 +4,32 @@ import SimulationObject from "./SimulationObject.tsx"
 import Vector2 from "./Vector2.tsx";
 
 export default class Plant extends SimulationObject {
-    private _plantParams: PlantParams;
-    private _stats: PlantStats
+    readonly params: PlantParams;
+    readonly stats: PlantStats;
     private _age: number;
 
     constructor(field: SimulationField, pos: Vector2, plantParams: PlantParams, stats: PlantStats, age: number = 0) {
         super(field, pos);
 
-        this._plantParams = plantParams;
-        this._stats = stats;
+        this.params = plantParams;
+        this.stats = stats;
         this._age = age;
     }
 
     get age() { return this._age; }
-    get plantParams() { return this._plantParams; }
-    get stats() { return this._stats; }
-    get radius() { return this._plantParams.radius * Math.sqrt(this.satietyValue / this._plantParams.satietyValue.mean); }
     get satietyValue() {
-        if (this._age > this._stats.oldAge) {
-            return this._stats.satietyValue / ((this._age / this._stats.oldAge) ** 3);
+        if (this._age > this.stats.oldAge) {
+            return this.stats.satietyValue / ((this._age / this.stats.oldAge) ** 3);
         }
-        return this._stats.satietyValue;
+        return this.stats.satietyValue;
     }
-    get color() { return this._plantParams.color; }
+    
+    get radius() { return this.params.radius * Math.sqrt(this.satietyValue / this.params.satietyValue.mean); }
+    get color() { return this.params.color; }
 
     update(deltaTime: number) {
         this._age += deltaTime;
-        if (this.satietyValue < 0.35 * this._plantParams.satietyValue.mean) {
+        if (this.satietyValue < 0.35 * this.params.satietyValue.mean) {
             this.field.removeObjectById(this.id);
         }
     }

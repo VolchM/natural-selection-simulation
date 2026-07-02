@@ -101,7 +101,7 @@ export default function ObjectInfo({object}: {object: SimulationObject | null}):
                 <ObjectStat label="Сытость при съедении:"
                             value={object.satietyValue}
                             bad={0}
-                            good={object.plantParams.satietyValue.max} />
+                            good={object.params.satietyValue.max} />
             </div>
         );
     } else {

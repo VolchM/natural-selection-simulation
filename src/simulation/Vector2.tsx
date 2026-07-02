@@ -1,4 +1,4 @@
-import { clamp, randomRange } from "../Utils";
+import { randomRange } from "../Utils";
 
 export default class Vector2 {
     x: number;
@@ -45,10 +45,6 @@ export default class Vector2 {
         const sin = Math.sin(angle);
         const cos = Math.cos(angle);
         return new Vector2(this.x * cos - this.y * sin, this.y * cos + this.x * sin);
-    }
-
-    clamped(xMin: number, xMax: number, yMin: number, yMax: number) {
-        return new Vector2(clamp(this.x, xMin, xMax), clamp(this.y, yMin, yMax));
     }
 
     static randomDirection(): Vector2 {
